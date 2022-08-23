@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String?   @db.VarChar(250)
+  age       Int?  
+  email     String    @unique
+  createdAt DateTime  @default(now())
+  active    Boolean   @default(true)
+  role      Role      @default(USER)
+  photos    Photo[]
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Photo {
+  id      Int @id @default(autoincrement())
+  url     String
+  legend  String?
+  userId  Int
+
+  user    User  @relation(fields: [userId], references: [id])
+
+  @@map("photos")
+}
