@@ -1,11 +1,20 @@
 import { NextApiHandler } from "next";
-import { Users } from "../../../util/users";
 import prisma from "../../../libs/prisma";
 
 const handlerGet: NextApiHandler = async (req, res) => {
     const { search, age } = req.query;
 
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+        where: {
+            active: true
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            active: false
+        }
+    });
 
     res.json({status: true, users});
 }

@@ -1,5 +1,4 @@
 import { NextApiHandler, NextApiRequest } from "next";
-import { isObject } from "util";
 import prisma from "../../../libs/prisma";
 
 const handleUserNotFound = (user: Object | null) => {
@@ -43,9 +42,13 @@ const handlerDelete: NextApiHandler = async (req, res) => {
         where: {
             id: parseInt(id as string)
         }
+    }).catch(()=>{
+        res.json(handleUserNotFound(null));
     });
 
-    res.json(handleUserNotFound(deleteUser));
+    if( deleteUser )
+        res.json(handleUserNotFound(deleteUser));
+        
 }
 
 const handler: NextApiHandler = async (req, res) => {
