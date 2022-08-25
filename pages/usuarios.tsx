@@ -3,14 +3,29 @@ import Head from "next/head";
 import Layout from "../component/Layout";
 import api from "../libs/api";
 import { User } from "../types/User";
+import { useState } from "react";
 
 type Props = {
     users: User[]
 }
 
 const Usuarios = ({ users }: Props ) => {
+    const [loading, setLoading] = useState(false);
+    const [pageCount, setPageCount] = useState(1);
+    const [usersList, setUserList] = useState<User[]>(users)
 
-    console.log(users);
+    const handlerLoadMore = async () => {
+        setLoading(true);
+        
+        const req = await fetch(`/api/users?page=${pageCount + 1}`);
+        const json =  await req.json();
+
+        if(json.status)
+            setUserList([...usersList, json.users]);
+
+        setLoading(false);
+        setPageCount(1 + pageCount);
+    }
 
     return (
         
@@ -24,10 +39,12 @@ const Usuarios = ({ users }: Props ) => {
             <br />
 
             <ul>
-                {users.map((user, index)=>(
-                    <li key={index}> {user.name} </li>
+                {usersList.map((user, index)=>(
+                    <li key={index}> {user?.name} </li>
                 ))}
             </ul>
+
+            <button onClick={handlerLoadMore}>Carregar mais (Click: {pageCount})</button>
 
         </div>
         
@@ -38,7 +55,7 @@ const Usuarios = ({ users }: Props ) => {
 export const getServerSideProps = async () => {
     const res = await api.getAllUsers();
 
-    const users = res.users;
+    const users = res;
     
     return {
         props: {

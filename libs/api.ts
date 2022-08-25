@@ -9,13 +9,15 @@ export default {
 
         let skip = 0;
         if(page)
-            skip = (page -1 ) * take;
+            skip = (page - 1 ) * take;
 
         const totalRecord = await prisma.user.count({
             where: {
                 active: true
             }
-        })
+        });
+
+        let totalPages = (totalRecord/take) >= 1 ? totalRecord/take : 1;
 
         const users = await prisma.user.findMany({
             skip,
@@ -35,7 +37,7 @@ export default {
             }
         });
 
-        return {totalPages: totalRecord/take, currentPage: skip+1, users};
+        return users; // {totalPages, currentPage: (page) ? page : 1, users};
     },
     insertUser: async (name: string, email: string) => {
         const newUser = await prisma.user.create({

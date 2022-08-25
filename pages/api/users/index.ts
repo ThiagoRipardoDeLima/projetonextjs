@@ -4,6 +4,12 @@ import api from "../../../libs/api";
 const handlerGet: NextApiHandler = async (req, res) => {
     const { search, age, page, quantity } = req.query;
     const users = await api.getAllUsers(parseInt(page as string), parseInt(quantity as string));
+    console.log(users);
+    if(!users.length){
+        res.json({status: false});
+        return;
+    }
+
     res.json({status: true, data: users});
 }
 
