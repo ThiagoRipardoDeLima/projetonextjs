@@ -1,7 +1,6 @@
-import { Prisma } from "@prisma/client";
-import { randomInt } from "crypto";
-import { NextApiHandler } from "next";
+import axios from "axios";
 import prisma from "../../../../libs/prisma";
+import { NextApiHandler } from "next";
 import { util } from "../../../../libs/util";
 
 type User = {
@@ -33,9 +32,8 @@ const handlerPopulateBd = async (users: any) => {
 }
 
 const handlerGetDataFakeApi = async () => {
-    const res = await fetch("https://fakerapi.it/api/v1/users");
-    const users = await res.json();
-    return users.data;
+    const json = await axios.get("https://fakerapi.it/api/v1/users");
+    return json.data.data;
 }
 
 const handlerPostUser: NextApiHandler = async (req, res) => {

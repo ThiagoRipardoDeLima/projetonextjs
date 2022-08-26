@@ -1,9 +1,10 @@
-import style from "../styles/Usuarios.module.css";
+import styles from "../styles/Usuarios.module.css";
 import Head from "next/head";
-import Layout from "../component/Layout";
-import api from "../libs/api";
-import { User } from "../types/User";
+import api from "../../libs/api";
+import { User } from "../../types/User";
 import { useState } from "react";
+import Link from "next/link";
+import axios from "axios";
 
 type Props = {
     users: User[]
@@ -13,37 +14,28 @@ const Usuarios = ({ users }: Props ) => {
     const [showMore, setShowMore] = useState(true);
     const [loading, setLoading] = useState(false);
     const [pageCount, setPageCount] = useState(1);
-    const [usersList, setUserList] = useState<User[]>(users)
+    const [usersList, setUserList] = useState<User[]>(users);
 
     const handlerLoadMore = async () => {
         if(!loading){
             setLoading(true);
-            const req = await fetch(`/api/users?page=${pageCount + 1}`);
-            const json = await req.json();
-            console.log(json);
-            setTimeout(() => {
-                (json.status) 
-                    ? setUserList([...usersList, ...json.data])
-                    : setShowMore(false);
-                
-                setLoading(false);
-                setPageCount(pageCount + 1);
-            }, 2000);
+            const json = await axios.get(`/api/users?page=${pageCount + 1}`);
+
+            (json.data.status) 
+                ? setUserList([...usersList, ...json.data.users])
+                : setShowMore(false);
+            
+            setLoading(false);
+            setPageCount(pageCount + 1);
+            
         }
        
     }
 
     const handlerAddMore = async () => {
-        const req = await fetch(`/api/users/populate`,{
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json;charset=UTF-8',
-            },
-        });
-        const json = await req.json();
-
-        if(json.status)
-            setUserList([...usersList, ...json.user]);
+        const json = await axios.post(`/api/users/populate`);
+        if(json.data.status)
+            setUserList([...usersList, ...json.data.user]);
 
     }
 
@@ -55,6 +47,9 @@ const Usuarios = ({ users }: Props ) => {
             </Head>
 
             <h1>Usuários</h1>
+
+            <button><Link href={`/usuarios/novo`}>Novo Usuário</Link></button>
+            
 
             <br />
 
@@ -70,7 +65,6 @@ const Usuarios = ({ users }: Props ) => {
             
             <button onClick={handlerAddMore}>Adicionar mais usuarios</button>
             
-
         </div>
         
     );

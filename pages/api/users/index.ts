@@ -4,13 +4,13 @@ import api from "../../../libs/api";
 const handlerGet: NextApiHandler = async (req, res) => {
     const { search, age, page, quantity } = req.query;
     const users = await api.getAllUsers(parseInt(page as string), parseInt(quantity as string));
-    console.log(users);
+    
     if(!users.length){
         res.json({status: false});
         return;
     }
 
-    res.json({status: true, data: users});
+    res.json({status: true, users});
 }
 
 const handlerPost: NextApiHandler = async (req, res) => {
@@ -18,10 +18,12 @@ const handlerPost: NextApiHandler = async (req, res) => {
 
     const newUser = await api.insertUser(name, email)
     .catch(()=>{
-        res.json({ error: 'Usuário já existe'});
+        res.json({ status: false, msg: 'Usuário já existe'});
+        return;
     })
 
-    res.status(201).json({statu: true, user: newUser});
+    if(newUser)
+        res.status(201).json({status: true, user: newUser});
 }
 
 const handler: NextApiHandler = (req, res) => {
