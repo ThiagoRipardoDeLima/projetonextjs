@@ -46,6 +46,13 @@ export default {
 
         return newUser;
     },
+    getUserByEmail: async (email: string) => {
+        const user = await prisma.user.findFirst({
+            where: { email, active: true }
+        });
+
+        return user;
+    },
     getUser: async (id: number) => {
         const user = await prisma.user.findFirst({
             where: { id, active: true }
