@@ -10,21 +10,41 @@ type Props = {
 }
 
 const Usuarios = ({ users }: Props ) => {
+    const [showMore, setShowMore] = useState(true);
     const [loading, setLoading] = useState(false);
     const [pageCount, setPageCount] = useState(1);
     const [usersList, setUserList] = useState<User[]>(users)
 
     const handlerLoadMore = async () => {
-        setLoading(true);
-        
-        const req = await fetch(`/api/users?page=${pageCount + 1}`);
-        const json =  await req.json();
+        if(!loading){
+            setLoading(true);
+            const req = await fetch(`/api/users?page=${pageCount + 1}`);
+            const json = await req.json();
+            console.log(json);
+            setTimeout(() => {
+                (json.status) 
+                    ? setUserList([...usersList, ...json.data])
+                    : setShowMore(false);
+                
+                setLoading(false);
+                setPageCount(pageCount + 1);
+            }, 2000);
+        }
+       
+    }
+
+    const handlerAddMore = async () => {
+        const req = await fetch(`/api/users/populate`,{
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+            },
+        });
+        const json = await req.json();
 
         if(json.status)
-            setUserList([...usersList, json.users]);
+            setUserList([...usersList, ...json.user]);
 
-        setLoading(false);
-        setPageCount(1 + pageCount);
     }
 
     return (
@@ -44,7 +64,12 @@ const Usuarios = ({ users }: Props ) => {
                 ))}
             </ul>
 
-            <button onClick={handlerLoadMore}>Carregar mais (Click: {pageCount})</button>
+            {showMore &&
+                <button onClick={handlerLoadMore} >{ !loading ? "Carregar mais" : "Aguarde, carregando..."}</button>
+            }
+            
+            <button onClick={handlerAddMore}>Adicionar mais usuarios</button>
+            
 
         </div>
         
