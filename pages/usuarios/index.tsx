@@ -6,15 +6,16 @@ import { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { unstable_getServerSession } from "next-auth";
-import { constants } from "buffer";
 import { GetServerSideProps } from "next";
 import { authOptions } from "../api/auth/[...nextauth]";
+import { UserAuth } from "../../types/UserAuth";
 
 type Props = {
-    users: User[]
+    users: User[],
+    loggerUser: UserAuth
 }
 
-const Usuarios = ({ users }: Props ) => {
+const Usuarios = ({ users, loggerUser }: Props ) => {
     const [showMore, setShowMore] = useState(true);
     const [loading, setLoading] = useState(false);
     const [pageCount, setPageCount] = useState(1);
@@ -30,17 +31,14 @@ const Usuarios = ({ users }: Props ) => {
                 : setShowMore(false);
             
             setLoading(false);
-            setPageCount(pageCount + 1);
-            
+            setPageCount(pageCount + 1);   
         }
-       
     }
 
     const handlerAddMore = async () => {
         const json = await axios.post(`/api/users/populate`);
         if(json.data.status)
             setUserList([...usersList, ...json.data.user]);
-
     }
 
     return (
@@ -52,8 +50,9 @@ const Usuarios = ({ users }: Props ) => {
 
             <h1>Usuários</h1>
 
+            <div>Olá {loggerUser.name}. (Tipo: {loggerUser.role})</div>
+
             <button><Link href={`/usuarios/novo`}>Novo Usuário</Link></button>
-            
 
             <br />
 
@@ -90,6 +89,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     
     return {
         props: {
+            loggerUser: session.user,
             users
         }
     }

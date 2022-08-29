@@ -35,11 +35,8 @@ const Navbar = () => {
                             }} 
                         ><a>{link.label}</a></Link>
                     </li>
-                    
                 )) }
-                <li><button onClick={() => {signOut()} }>Sair</button></li>
-            </ul>
-            <p>Ola, {session?.user?.name}</p>
+            </ul>            
         </div>
     );
 };

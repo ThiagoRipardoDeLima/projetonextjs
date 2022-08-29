@@ -16,24 +16,26 @@ const Layout = ({children}: Props) => {
                     <h1>Meu projeto</h1>
             </header>
 
-            {statusSession === 'loading' &&
-                <div>Carregando</div>
+            <Navbar/>
+            <main>{children}</main>
+
+           {/*  {statusSession === 'loading' &&
+                <div>Carregando...</div>
             }
 
             {statusSession === 'unauthenticated' &&
-                <div>Usuário não logado!</div>
+                [
+                    <div>Usuário não logado!</div>,
+                    <main><button onClick={ () => { signIn() }}>Fazer login</button></main>
+                ]
             }
 
-            {session &&
+            {statusSession === 'authenticated' &&
                 [
                     <Navbar/>,
                     <main>{children}</main>
                 ]
-            }
-
-            {!session &&
-                <main><button onClick={ () => { signIn() }}>Fazer login</button></main>
-            }
+            } */}
             
             <footer className={styles.footer}>
                 Todos os direitos reservados.

@@ -4,4 +4,5 @@ export const navigationLinks = [
     , { label: 'Blog', path: '/blog',  }
     , { label: 'Lista de Tarefas', path: '/todo',  }
     , { label: 'Usuários', path: '/usuarios',  }
+    , { label: 'Login', path: '/login',  }
 ]
