@@ -8,13 +8,21 @@ type Props = {
 }
 
 const Layout = ({children}: Props) => {
-    const {data: session} = useSession();
-    
+    const {data: session, status: statusSession} = useSession();
+
     return (
         <div className={styles.container}>
             <header className={styles.header}>
                     <h1>Meu projeto</h1>
             </header>
+
+            {statusSession === 'loading' &&
+                <div>Carregando</div>
+            }
+
+            {statusSession === 'unauthenticated' &&
+                <div>Usuário não logado!</div>
+            }
 
             {session &&
                 [

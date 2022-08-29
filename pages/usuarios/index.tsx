@@ -5,6 +5,10 @@ import { User } from "../../types/User";
 import { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
+import { unstable_getServerSession } from "next-auth";
+import { constants } from "buffer";
+import { GetServerSideProps } from "next";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 type Props = {
     users: User[]
@@ -71,7 +75,15 @@ const Usuarios = ({ users }: Props ) => {
 
 }
 
-export const getServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+    const session = await unstable_getServerSession(
+        context.req, context.res, authOptions
+    )
+
+    if(!session)
+        return { redirect: { destination: '/', permanent: true } }
+
     const res = await api.getAllUsers();
 
     const users = res;
