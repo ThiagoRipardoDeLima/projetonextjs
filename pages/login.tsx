@@ -1,17 +1,44 @@
 import { signIn } from "next-auth/react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 const Login = () => {
-
+    const [errorText, setErrorText] = useState('');
     const [email, setEmail] = useState('');
     const [password, setSenha] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const router = useRouter();
 
     const handlerSubmit = async () => {
+
+        if(!email || !password){
+            setErrorText('Informe email e senha para prosseguir!');
+            return;
+        }
+
+        setErrorText('');
+        setLoading(true);
+
         const request =  await signIn('credentials', {
             redirect: false,
             email, password
-        })
+        });
+
+        setLoading(false);
+
+        if(request && request.ok){
+            if(!router.query.callbackUrl){
+                router.push('/');
+                return;
+            }
+
+            router.push(router.query.callbackUrl as string);
+
+        } else {
+            setErrorText('Acesso negado!');
+        }
     }
 
     return (
@@ -37,6 +64,9 @@ const Login = () => {
             />
             
             <button onClick={handlerSubmit}>Login</button>
+
+            {errorText}
+            {loading && <div>Carregando...</div> }
 
         </div>
     );
