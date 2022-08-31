@@ -1,11 +1,17 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GithubProvider from "next-auth/providers/github";
+
 import api from "../../../libs/api";
 import { UserAuth } from "../../../types/UserAuth";
 
 export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     providers:[
+        GithubProvider({
+            clientId: process.env.GITHUB_ID as string,
+            clientSecret: process.env.GITHUB_SECRET as string
+        }),
         CredentialsProvider({
             id: 'credentials',
             credentials: {
@@ -44,7 +50,7 @@ export const authOptions: NextAuthOptions = {
         },
     },
     pages: {
-        signIn: '/login'
+        //signIn: '/login'
     }
 }
 
